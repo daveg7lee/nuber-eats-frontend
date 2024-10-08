@@ -1,5 +1,14 @@
 import React from "react";
+import { isLoggedInVar } from "../apollo";
 
 export const LoggedInRouter = () => {
-  return <span>Logged In</span>;
+  const onClick = () => {
+    isLoggedInVar(false);
+  };
+  return (
+    <div>
+      <h1>Logged In</h1>
+      <button onClick={onClick}>Log out</button>
+    </div>
+  );
 };
