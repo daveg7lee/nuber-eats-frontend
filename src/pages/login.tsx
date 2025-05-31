@@ -30,7 +30,7 @@ export const Login = () => {
     }
   };
   const onError = (error: ApolloError) => {};
-  const [loginMutation, { data: loginMutationResult }] = useMutation<
+  const [loginMutation, { data: loginMutationResult, loading }] = useMutation<
     LoginMutation,
     LoginMutationVariables
   >(LOGIN_MUTATION, {
@@ -44,7 +44,9 @@ export const Login = () => {
     onError,
   });
   const onSubmit = () => {
-    loginMutation();
+    if (!loading) {
+      loginMutation();
+    }
   };
   return (
     <div className="h-screen flex items-center justify-center bg-gray-800">
@@ -81,7 +83,9 @@ export const Login = () => {
           {formState.errors?.password?.type === "minLength" && (
             <FormError errorMessage="Password must be more than 10 chars." />
           )}
-          <button className="mt-3 btn">Log in</button>
+          <button className="mt-3 btn">
+            {loading ? "Loading..." : "Log in"}
+          </button>
           {loginMutationResult?.login.error && (
             <FormError errorMessage={loginMutationResult.login.error} />
           )}
