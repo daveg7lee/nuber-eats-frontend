@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { FormError } from "../components/form-error";
-import { gql, useMutation } from "@apollo/client";
+import { ApolloError, gql, useMutation } from "@apollo/client";
 import { LoginMutation, LoginMutationVariables } from "../gql/graphql";
 
 interface ILoginForm {
@@ -10,8 +10,8 @@ interface ILoginForm {
 }
 
 const LOGIN_MUTATION = gql`
-  mutation login($email: String!, $password: String!) {
-    login(input: { email: $email, password: $password }) {
+  mutation login($loginInput: LoginInput!) {
+    login(input: $loginInput) {
       ok
       token
       error
@@ -20,20 +20,31 @@ const LOGIN_MUTATION = gql`
 `;
 
 export const Login = () => {
-  const { register, getValues, formState, handleSubmit } =
-    useForm<ILoginForm>();
-  const [loginMutation, { loading, error, data }] = useMutation<
+  const { register, formState, handleSubmit, watch } = useForm<ILoginForm>();
+  const onCompleted = (data: LoginMutation) => {
+    const {
+      login: { ok, error, token },
+    } = data;
+    if (ok) {
+      console.log(token);
+    }
+  };
+  const onError = (error: ApolloError) => {};
+  const [loginMutation, { data: loginMutationResult }] = useMutation<
     LoginMutation,
     LoginMutationVariables
-  >(LOGIN_MUTATION);
-  const onSubmit = () => {
-    const { email, password } = getValues();
-    loginMutation({
-      variables: {
-        email,
-        password,
+  >(LOGIN_MUTATION, {
+    variables: {
+      loginInput: {
+        email: watch("email"),
+        password: watch("password"),
       },
-    });
+    },
+    onCompleted,
+    onError,
+  });
+  const onSubmit = () => {
+    loginMutation();
   };
   return (
     <div className="h-screen flex items-center justify-center bg-gray-800">
@@ -71,6 +82,9 @@ export const Login = () => {
             <FormError errorMessage="Password must be more than 10 chars." />
           )}
           <button className="mt-3 btn">Log in</button>
+          {loginMutationResult?.login.error && (
+            <FormError errorMessage={loginMutationResult.login.error} />
+          )}
         </form>
       </div>
     </div>
