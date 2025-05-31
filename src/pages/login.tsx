@@ -1,4 +1,5 @@
 import React from "react";
+import nuberLogo from "../images/logo.svg";
 import { useForm } from "react-hook-form";
 import { FormError } from "../components/form-error";
 import { ApolloError, gql, useMutation } from "@apollo/client";
@@ -49,18 +50,21 @@ export const Login = () => {
     }
   };
   return (
-    <div className="h-screen flex items-center justify-center bg-gray-800">
-      <div className="bg-white w-full max-w-lg py-10 rounded-lg text-center">
-        <h3 className="text-2xl text-gray-800">Log In</h3>
+    <div className="h-screen flex items-center flex-col mt-10 lg:mt-28">
+      <div className="w-full max-w-screen-sm flex flex-col items-center px-5">
+        <img src={nuberLogo} alt="Uber Eats logo" className="w-52 mb-10" />
+        <h4 className="text-left w-full text-3xl mb-10 font-medium">
+          Welcome back
+        </h4>
         <form
-          className="grid gap-3 mt-5 px-5"
+          className="grid gap-3 mt-5 w-full"
           onSubmit={handleSubmit(onSubmit)}
         >
           <input
             {...register("email", { required: "Email is required" })}
             type="email"
             placeholder="Email"
-            className="mb-3 input"
+            className="p-3 border text-lg font-light border-gray-300 focus:outline-none focus:border-gray-500 transition-colors"
             required
           />
           {formState.errors?.email?.message && (
@@ -74,7 +78,7 @@ export const Login = () => {
             minLength={10}
             type="password"
             placeholder="Password"
-            className="input"
+            className="p-3 border text-lg font-light border-gray-300 focus:outline-none focus:border-gray-500 transition-colors"
             required
           />
           {formState.errors?.password?.message && (
@@ -83,7 +87,7 @@ export const Login = () => {
           {formState.errors?.password?.type === "minLength" && (
             <FormError errorMessage="Password must be more than 10 chars." />
           )}
-          <button className="mt-3 btn">
+          <button className="mt-3 py-3 text-white bg-green-600 hover:bg-green-700 transition-colors text-lg font-medium">
             {loading ? "Loading..." : "Log in"}
           </button>
           {loginMutationResult?.login.error && (
